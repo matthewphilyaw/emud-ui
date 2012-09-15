@@ -1,0 +1,3 @@
+# emud-ui
+
+A command line interface for emud. It's written in clojure, and my goal is to ultimately create a more eloborate ui base on ncurses.
