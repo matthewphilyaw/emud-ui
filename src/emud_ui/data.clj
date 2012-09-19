@@ -2,7 +2,8 @@
   (:use [cheshire.core]))
 
 (defn encode-message [input]
-  (generate-string {:command input :message ""}))
+  ;; needs to be delimted by new line. 	
+  (str (generate-string {:command input}) "\n"))
 
 (defn decode-message [msg]
-  (:message (parse-string msg true)))
+  (:text (parse-string msg true)))

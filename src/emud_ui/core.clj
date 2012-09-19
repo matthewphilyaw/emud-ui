@@ -5,13 +5,14 @@
   (:gen-class :main true))
 
 (defn repl [conn]
+  (println (decode-message (read-from conn))) ;; blocking call
+  (flush )
   (print "=> ")
   (flush )
   (let [line (read-line)]
     (if (and (not (= "exit" line)) (not (nil? conn)))
       (do
         (write-to conn (encode-message line))
-        (println (decode-message (read-from conn))) ;; blocking call
         (recur conn)))))
 
 (defn -main [& args]
