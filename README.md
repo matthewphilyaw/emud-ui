@@ -25,5 +25,7 @@ simply doing
 lein run
 ```
 
-swallows the input stream, so when the server replies back the code that is blocking waiting for the read to happen never exits. Those two options resolve that issue. 
+swallows the input stream, so when the server replies back the code that is blocking waiting for the read to happen never exits. Those two options resolve that issue.
+
+A stand-alone jar is in the download section.
 
