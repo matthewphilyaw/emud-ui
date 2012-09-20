@@ -12,7 +12,7 @@
   (let [line (read-line)]
     (if (and (not (= "exit" line)) (not (nil? conn)))
       (do
-        (write-to conn (encode-message line))
+        (write-to conn  (encode-message line))
         (recur conn)))))
 
 (defn -main [& args]
@@ -20,7 +20,7 @@
     (cli args
       ["-h" "--help" "Show help" :flag true :default false]
       ["-n" "--server-name" "Server name" :default "localhost"]
-      ["-p" "--port" "Port number" :default 14000])]
+      ["-p" "--port" "Require:Port number"])]
     (when (:help opts)
       (println banner)
       (System/exit 0))
