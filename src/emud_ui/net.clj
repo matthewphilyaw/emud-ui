@@ -26,4 +26,3 @@
         buf (byte-array length)]
     (.read (:in @conn) buf, 0, length)
     (apply str (map char buf))))
-
