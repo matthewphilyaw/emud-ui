@@ -4,7 +4,7 @@
 (defn part-by-line [l text]
   (filter #(not (empty? %))
            (map #(partition-all l %)
-                 (split-lines text))))
+                (split-lines text))))
 
 (defn create-buffer
   [r text]

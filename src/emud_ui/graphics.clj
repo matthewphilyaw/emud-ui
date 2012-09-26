@@ -1,11 +1,6 @@
 (ns emud-ui.graphics
+  (:use emud-ui.text)
   (:require [lanterna.screen :as s]))
-
-;; TODO take remove create-buffer
-;;(defn print-scr [or-r or-c r c text sc]
-;; (loop [rows (take (dec r) (create-buffer c text)) index or-r]
-;;   (when (seq rows)
-;;    (s/put-string sc or-c index (apply str (first rows)))
 
 (defn d-hor [c r dev]
   (loop [index c]
@@ -24,10 +19,13 @@
         (s/put-string dev (dec c) index "\u2503")
         (recur (dec index))))))
 
+;; TODO - add a section in top border for displayin curent server
+;; TODO - To cope with resizing possibly look into refactoring
 (defn draw-border [dev]
   (let [[c r] (s/get-size dev)]
     ;; position cursor
-    (s/move-cursor dev 2 (- r 2))
+    (s/move-cursor dev 5 (- r 2))
+    (s/put-string dev 2 (- r 2) "=>")
     ;; draw lines for vert/hor
     (d-hor (- c 2) r dev)
     (d-ver (- c 1) (dec (dec r)) dev)
@@ -41,11 +39,60 @@
     ;; put title
     (s/put-string dev 3 0 "<")
     (s/put-string dev 8 0 ">")
-    (s/put-string dev 4 0 "EMUD")))
+    (s/put-string dev 4 0 "EMUD")
+    (s/redraw dev)))
 
+;; TODO - Need to handle a print-scr from different thread
+(defn print-scr [dev c index rows]
+  (when (seq rows)
+    ;; clear the line first before drawing the next.
+    (s/put-string dev c index (apply str (repeat (- ((s/get-size dev) 0) 5) " ")))
+    (s/put-string dev c index (apply str (first rows)))
+    (recur dev c (inc index) (rest rows))))
+
+;; TODO - possibly look into scrolling the message pane with a key combo like :shift :up
+(defn get-input [dev c buff]
+  (let [inp (s/get-key-blocking dev)
+        row (- ((s/get-size dev) 1) 2)]
+    (if (= :enter inp)
+      (do
+        (s/put-string dev 5 row (apply str (repeat (- c 5) " ")))
+        (s/move-cursor dev 5 row)
+        (apply str buff))
+      (if (keyword inp)
+        (if (and (= :backspace inp) (> c 5))
+          (do
+            (let [new-pos (dec c)]
+              (s/put-string dev new-pos row " ")
+              (s/move-cursor dev new-pos row)
+              (s/redraw dev)
+              (get-input dev new-pos (pop buff))))
+          (get-input dev c buff))
+        (if (< c (- ((s/get-size dev) 0) 3))
+          (do
+            (s/put-string dev c row (str inp))
+            (s/move-cursor dev (inc c) row)
+            (s/redraw dev)
+            (get-input dev (inc c) (conj buff inp)))
+          (get-input dev c buff))))))
+
+;; TODO - Add means of stoping repl and closing program
+;; TODO - Need to create line buffer as a reference to be used with the threads and then call create-buffer with it
+(defn repl-it [dev line-buff]
+  (let [x (get-input dev 5 [])
+        draw-buff (concat (reverse (create-buffer (- ((s/get-size dev) 0) 30) x)) line-buff)]
+    ;;(prn draw-buff)
+    (print-scr dev 2 1 (reverse (take (- ((s/get-size dev) 1) 4) draw-buff)))
+    (s/redraw dev)
+    (recur dev draw-buff)))
+
+;; TODO - look into resizing options
+;; TODO - modify to receive ip/port combo that can be used for displaying current server
 (defn start-ui [con]
-  (let [scr (s/get-screen)]
-   (draw-border scr)
+  (let [scr (s/get-screen :auto)]
    (s/start scr)
-   (s/get-key-blocking scr)
-   (s/stop scr))) 
+   (s/clear scr)
+   (s/redraw scr)
+   (draw-border scr)
+   (repl-it scr '())
+   (s/stop scr)))

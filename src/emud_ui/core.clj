@@ -18,5 +18,7 @@
     (let [s (:server-name opts)
           p (Integer. (:port opts))]
       (if (and s p)
+        ;; TODO - bring in tcp lib to connect to remote server
+        ;; TODO - pass in server/port combo for displaying active connection
         (start-ui nil) 
         (prn banner)))))
