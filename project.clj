@@ -1,4 +1,4 @@
-(defproject emud-ui "1.0.0-SNAPSHOT"
+(defproject emud-ui "0.8.0"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/tools.cli "0.2.1"]

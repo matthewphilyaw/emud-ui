@@ -1,2 +1,1 @@
-;; TODO - Need to wire up tcp lib
 ;; TODO - Work on refactor a lot of graphics.clj to eliminate a lot of code smells

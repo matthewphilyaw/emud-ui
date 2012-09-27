@@ -11,14 +11,15 @@
     (cli args
       ["-h" "--help" "Show help" :flag true :default false]
       ["-n" "--server-name" "Server name" :default "localhost"]
-      ["-p" "--port" "Port number" :default "8081"])]
+      ["-p" "--port" "Port number"])]
     (when (:help opts)
       (println banner)
       (System/exit 0))
     (let [s (:server-name opts)
-          p (Integer. (:port opts))]
+          p (:port opts)]
       (if (and s p)
-        ;; TODO - bring in tcp lib to connect to remote server
         ;; TODO - pass in server/port combo for displaying active connection
-        (start-ui nil) 
-        (prn banner)))))
+        (let [con (try (connect {:name s :port (Integer. p)}) (catch Exception e nil))]
+          (start-ui con (ref '())))
+        (println banner))))
+  (System/exit 0))

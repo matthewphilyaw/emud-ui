@@ -1,4 +1,5 @@
 (ns emud-ui.net
+  (use emud-ui.data)
   (:require [clojure.java.io :as cio])
   (:import (java.net Socket)))
 
@@ -17,12 +18,6 @@
       conn))
 
 (defn write-to [conn message]
-  (.write (:out @conn) (pack-msg message)) 
+  (.write (:out @conn) (pack-msg message))
   (.flush (:out @conn))
   nil)
-
-(defn read-from [conn]
-  (let [length (.readInt (:in @conn))
-        buf (byte-array length)]
-    (.read (:in @conn) buf, 0, length)
-    (apply str (map char buf))))

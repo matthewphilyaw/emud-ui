@@ -1,31 +1,21 @@
 # emud-ui
 
-A command line interface for emud. It's written in clojure, and my goal is to ultimately create a more eloborate ui base on ncurses.
+A curses based UI for EMUD
 
 Leiningen 1.7.1 has been used to handle the project, no promises on other versions.
 
-Also if using leiningen I'd recommend either running
+to run it from command line through lein
 
-run -h or --help for more info on parameters.
-
-``` bash
-lein trampoline run [options]
+```bash
+lein run [options]
 ```
 
-or 
+You can also package it up in a jar like
 
-``` bash
+```bash
 lein uberjar
-java -jar [insert jar that was generated] [options]
 ```
 
-simply doing
+That will create a jar file with all the dependencies tucked inside. In fact the downloads section contains this far file.
 
-``` bash
-lein run
-```
-
-swallows the input stream, so when the server replies back the code that is blocking waiting for the read to happen never exits. Those two options resolve that issue.
-
-A stand-alone jar is in the download section.
-
+Couple of notes, when the UI launches you can exit at anytime by pressing Esacape and if the emud server is not running you will get an error and be prompted to close.
